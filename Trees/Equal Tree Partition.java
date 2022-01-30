@@ -12,6 +12,7 @@
  * }
  */
 public class Solution {
+    //O(n, n)
     //long for owerflows
     // storing intermedeate sum then matching if its halfSum
     static long totalSum = 0;
