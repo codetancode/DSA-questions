@@ -1,76 +1,52 @@
-Q2. Distance between Nodes of BST
-Problem Description
+//Distance between Nodes of BST
+/**
+ * Definition for binary tree
+ * class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) {
+ *      val = x;
+ *      left=null;
+ *      right=null;
+ *     }
+ * }
+ */
+public class Solution {
+    int findDistanceInBST(TreeNode root,int B, int C){
+        if(root==null){return 0;}
+        // deciding based on comparision in BST
+        if(root.val < B && root.val < C){
+            return findDistanceInBST(root.right, B, C);
+        }
+        if(root.val > B && root.val > C){
+            return findDistanceInBST(root.left, B, C);
+        }
 
-Given a binary search tree.
-Return the distance between two nodes with given two keys B and C. It may be assumed that both keys exist in BST.
+        //now root will be existing b/w B and c or, root is a common parent of B and C
+        //sum of distance from root to B + root to C, as edge so no +1 in sum
+        return calDistFromCommonParant(root, B) + calDistFromCommonParant(root, C);
+    }
 
-NOTE: Distance between two nodes is number of edges between them.
+    int calDistFromCommonParant(TreeNode root,int target){
+        if(root==null || root.val == target ){return 0;}
 
+        //as BST
+        if(root.val > target){
+            return 1 + calDistFromCommonParant(root.left, target);
+        }
+        // anyway got right
+        return 1 + calDistFromCommonParant(root.right, target);
+    }
 
-
-Problem Constraints
-
-1 <= Number of nodes in binary tree <= 1000000
-
-0 <= node values <= 109
-
-
-
-Input Format
-
-First argument is a root node of the binary tree, A.
-
-Second argument is an integer B.
-
-Third argument is an integer C.
-
-
-
-Output Format
-
-Return an integer denoting the distance between two nodes with given two keys B and C
-
-
-
-Example Input
-
-Input 1:
-
-    
-         5
-       /   \
-      2     8
-     / \   / \
-    1   4 6   11
- B = 2
- C = 11
-Input 2:
-
-    
-         6
-       /   \
-      2     9
-     / \   / \
-    1   4 7   10
- B = 2
- C = 6
-
-
-Example Output
-
-Output 1:
-
- 3
-Output 2:
-
- 1
-
-
-Example Explanation
-
-Explanation 1:
-
- Path between 2 and 11 is: 2 -> 5 -> 8 -> 11. Distance will be 3.
-Explanation 2:
-
- Path between 2 and 6 is: 2 -> 6. Distance will be 1
+    public int solve(TreeNode A, int B, int C) {
+        int res = 0;
+        if(B > C){
+            //send B as small val
+            res = findDistanceInBST(A, C, B);
+        }else{
+            res = findDistanceInBST(A, B, C);
+        }
+        return res;
+    }
+}
