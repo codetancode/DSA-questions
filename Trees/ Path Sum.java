@@ -11,6 +11,7 @@
  *     }
  * }
  */
+// O(n, n) solution
 public class Solution {
     int pathSum0Ornot(TreeNode root, int sum){
         if(root==null){return 0;}
