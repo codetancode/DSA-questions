@@ -12,6 +12,9 @@
  * }
  */
 public class Solution {
+//brute force could also be just inorders of BST and check if its sorted or not
+//given the issue of where the == value nodes will lie,
+//using this, recursively checking with expected range and putting global flag to check BST at every node
     static boolean isBST = true;
     static int[] preOLRrangeCheck(TreeNode node){
         // [max, min] possible range for the root for valid bst
