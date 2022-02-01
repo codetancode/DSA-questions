@@ -1,20 +1,25 @@
 public class Solution {
-    //O(max(m, n)*logn, m+n)
-    //basic idea fill all in minheap, take out bth element
+    // O(max(n, m)*logn, B)
+    //reducing space by using max heap of size B
     public int solve(ArrayList<ArrayList<Integer>> A, int B) {
-        PriorityQueue<Integer> minheap = new PriorityQueue<>();
-        //fill all element in heap
+        PriorityQueue<Integer> maxheap = new PriorityQueue<>(B, Collections.reverseOrder());
+        //fill elements in max heap
+        //reducing Space to B
         for(int i=0;i < A.size();i++){
             for(int j=0;j < A.get(0).size();j++){
-                minheap.add(A.get(i).get(j));
+                if(maxheap.size() < B){
+                    maxheap.add(A.get(i).get(j));
+                }else{
+                    // for extra size, check if new element is less than current max
+                    if(maxheap.peek() > A.get(i).get(j)){
+                        // replace, keeping B elements in heap
+                        maxheap.poll();
+                        maxheap.add(A.get(i).get(j));
+                    }
+                }
             }
         }
-
-        // take out B-1 elements
-        for(int i=0;i < B-1;i++){
-            minheap.poll();
-        }
-        // bth elements
-        return minheap.peek();
+        // bth smalles element
+        return maxheap.peek();
     }
 }
