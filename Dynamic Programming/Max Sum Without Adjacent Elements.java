@@ -1,27 +1,43 @@
 public class Solution {
-    //dp O(n, n)- space as using additional array, but can be optimized to 1
+    //dp O(n, 1)- space optimized to 1
     //idea is to take max out of both top and bottom,
-    // then apply the concept of take it and leave it int the array
-    //take it or leave it comcept, going from left to right maintaining max sum
+    //keep 2 prev val maintaining max in them, and take sum with max, either cur+prevprev, or just prev
     //max of (curr ele + (curr-2th ele), (curr-1)th ele)
     public int adjacent(ArrayList<ArrayList<Integer>> A) {
-        ArrayList<Integer> res = new ArrayList<Integer>();
         //adding 0 for reference
-        res.add(0);
+        int maxSum = 0;
+        int[] prevVal = new int[2];
         for(int i=0;i < A.get(0).size();i++){
             // storing max of top and bottom
-            res.add(Math.max(A.get(0).get(i), A.get(1).get(i)));
-        }
+            int maxTopBot = Math.max(A.get(0).get(i), A.get(1).get(i));
+            if(i <= 1){
+                //for 1st 2 values
+                // keep 2 prev val maintaining max in them
+                prevVal[i] = Math.max(maxTopBot, prevVal[0]);
+            }else{
+                //i > 1 so i-2 index exist
+                int currPrePrevSum = maxTopBot + prevVal[0];
+                int currPrevSum = prevVal[1];
 
-        // starting from 2nd index as array is [ 0, 1stElem, 2ndElem .. ]
-        for(int i=2;i < A.get(0).size()+1;i++){
-            //selecting and rejecting based on max value, either curr + prev prev sum, or just prev sum continues
-            int currPrevPrevSum = res.get(i)+res.get(i-2);
-            int curPrevSum = res.get(i-1);
-            res.set(i, Math.max(curPrevSum, currPrevPrevSum));
-        }
+                int maxSumTillNow = Math.max(currPrePrevSum, currPrevSum);
+                maxSum += maxSumTillNow;
+                //if currPrePrevSum greater, update prev as currPrePrevSum, and currPrePrevSum(prevVal[0]) as currPreSum
+                if(currPrePrevSum > currPrevSum){
+                    prevVal[0]=currPrevSum;
+                    prevVal[1]=currPrePrevSum;
+                }else{
+                    //continue currPreSum in both as its greater
+                    prevVal[0]=currPrevSum;
+                    prevVal[1]=currPrevSum;
+                }
 
-        //last element in res will be added max sum
-        return res.get(res.size()-1);
+            }
+        }
+        if(A.size() <= 2){
+            //any depending on the input
+            return Math.max(prevVal[0], prevVal[1]);
+        }else{
+            return maxSum;
+        }
     }
 }
