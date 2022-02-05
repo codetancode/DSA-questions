@@ -1,4 +1,5 @@
 public class Solution {
+    //O(nlogn, n)
     //she picks box with candies , B, and doesnot repeat same box again
     //after eating from 1 box, she put remaining /2 candy in smallest candy box available at that time
     public int solve(ArrayList<Integer> A, int B) {
@@ -8,7 +9,7 @@ public class Solution {
         for(int i=0;i < A.size();i++){
             minheap.add(A.get(i));
         }
-        // while top-min of heap < B mesha could eat , also size > 1
+        // while top-min of heap < B mesha could eat , also size > 1 cox polling 2twice in loop
         while(minheap.peek() <= B && minheap.size() > 1){
             int smallestBox = minheap.poll();
             //eat
