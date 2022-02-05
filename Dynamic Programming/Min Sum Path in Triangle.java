@@ -1,45 +1,29 @@
 public class Solution {
-    //top to bottom approach
+    //bottom to top  approach
     // O(n*n, 1)(traversing all emenent, and using given input for space so 1)
-    //idea is to go either top to bottom, adding up min() path cost in rows(topback and top),
-    // for last element top doesnot exist, add opback only
-    // in the end get minimum of last row
-	// [   1 int 0th row is topback for 2 in next row, top for 1 in next row
-    //     [1] notop for 2 in next row
-    //     [1, 2] notop for 3 in next row
+    //idea is to go bottom to top, adding up min() path cost in rows(nextDown and nextDownNext),
+    // finally will have answer at the top row as single element
+    // [   1 in 1th row is next down to 1 in 0th row, and 2 in 1th row is nextdownnext to 1 in 0th row
+    //     [1]
+    //     [1, 2]
     //     [1, 2, 3]
     // ]
 
     public int minimumTotal(ArrayList<ArrayList<Integer>> a) {
-        int minCost = Integer.MAX_VALUE;
-        //fix 1st column in all rows
-        for(int row=1;row < a.size();row++){
-            a.get(row).set(0, a.get(row-1).get(0)+a.get(row).get(0));
-        }
-
-        // now starting from 1stindex row and 1st index col for all rows
-        for(int row=1;row < a.size();row++){
-            for(int col=1;col < a.get(row).size();col++){
-                int topBack = a.get(row-1).get(col-1);
+        int lastRowIndex = a.size()-1;
+        //starting from 2nd last row, to all the way to top
+        for(int row=lastRowIndex-1;row >= 0;row--){
+            //both nextDown and nextDownNext will exist (while starting from 2nd last row and goinf to top)
+            for(int col = 0;col < a.get(row).size();col++){
+                int nextDown = a.get(row+1).get(col);
+                int nextDownNext = a.get(row+1).get(col+1);
                 int curr = a.get(row).get(col);
-                 //all elements in row except last element will have top in prev row
-                if(col < a.get(row).size()-1){
-                    int top = a.get(row-1).get(col);
-                    //set minimum sum, from top and topBack
-                    a.get(row).set(col, Math.min( curr + topBack, curr + top));
-
-                }else{
-                //last element of next row will not have top element in previous row
-                // so just add topBack
-                    a.get(row).set(col, curr + topBack);
-                }
+                //setting 2nd row values as minimum considering next ro values
+                a.get(row).set(col, Math.min(curr + nextDown, curr + nextDownNext));
             }
         }
-        // minimum cost in last row
-        for(int col=0;col < a.get(a.size()-1).size();col++){
-            minCost = Math.min(minCost, a.get(a.size()-1).get(col));
-        }
 
-        return minCost;
+        // just return top element
+        return a.get(0).get(0);
 	}
 }
