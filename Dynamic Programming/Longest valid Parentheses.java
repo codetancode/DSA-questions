@@ -1,44 +1,30 @@
 public class Solution {
-    //O(n^3, 1) bf solution, use dp to store interem values and reduce time
-    //n^2 for every sequence, O(n) for validating every sequence, so O(n^3)
-    boolean validateString(String s, int frm, int to){
-        Stack<Character> st = new Stack<>();
-        // if st has some val, and new val is closing, pop
-        // if st has no value and new val is closing return false
-        //only add opening in stack, return if size==0 in the end
-        for(int i=frm;i <= to;i++){
-            char temp = s.charAt(i);
-            if(!st.isEmpty()){
-                if(temp == ')' && st.peek() == '('){
-                    st.pop();
-                }
-            }else{
-                //ist char is closing then to return false
-                //if closing is more
-                if(temp == ')'){
-                    return false;
-                }
-            }
-            //add only opening
-            if(temp == '('){
-                st.push(temp);
-            }
-
-        }
-        // if any opening remained
-        return st.size()==0;
-    }
+    //idea is to use stack for keeping string index(only opening), check if valid with top and new char and update answer max
     public int longestValidParentheses(String A) {
-        int validCount = 0;
-        for(int i=0;i < A.length()-1;i++){
-            for(int j=i+1;j < A.length();j++){
-                //for all i to j sequence if valid. update max
-                if(validateString(A, i, j)){
-                    validCount=Math.max(validCount, j-i+1);
+        Stack<Integer> st = new Stack<>();
+        //as doing peek in loop for taking max
+        st.push(-1);
+        int res=0;
+        for(int i=0;i < A.length();i++){
+            char temp = A.charAt(i);
+            // if opening add index
+            if(temp == '('){
+                st.push(i);
+            }else{
+                //check if closing matching with last opening
+                //as doing peek for max in loop so keeping -1 as top refreence(for imbalanced)
+                // (more closing in test cases)
+                if(st.peek() != -1 && (temp == ')' && A.charAt(st.peek()) == '(')){
+                    st.pop();
+                    //pop opening index, now get length of valid string from
+                    //curr i - (1-opening index) this will give length
+                    res = Math.max(res, i-st.peek());
+                }else{
+                    //if imbalanced keep adding closing index
+                    st.push(i);
                 }
             }
         }
-        // return sequence length
-        return validCount;
+        return res;
     }
 }
