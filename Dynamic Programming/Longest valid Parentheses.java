@@ -1,30 +1,22 @@
 public class Solution {
-    //idea is to use stack for keeping string index(only opening), check if valid with top and new char and update answer max
+    // O(n, n) DP solution
+    //idea is to store dp values in next index and keeping a variable to check prev opening
     public int longestValidParentheses(String A) {
-        Stack<Integer> st = new Stack<>();
-        //as doing peek in loop for taking max
-        st.push(-1);
-        int res=0;
+        //as updating in current + 1 index so len+1 size
+        ArrayList<Integer> dp = new ArrayList<Integer>(Collections.nCopies(A.length()+1,0));
+        int maxLen = 0;
         for(int i=0;i < A.length();i++){
-            char temp = A.charAt(i);
-            // if opening add index
-            if(temp == '('){
-                st.push(i);
-            }else{
-                //check if closing matching with last opening
-                //as doing peek for max in loop so keeping -1 as top refreence(for imbalanced)
-                // (more closing in test cases)
-                if(st.peek() != -1 && (temp == ')' && A.charAt(st.peek()) == '(')){
-                    st.pop();
-                    //pop opening index, now get length of valid string from
-                    //curr i - (1-opening index) this will give length
-                    res = Math.max(res, i-st.peek());
-                }else{
-                    //if imbalanced keep adding closing index
-                    st.push(i);
-                }
+            //prev check is curr - dp of curr -1
+            int prevCheckIndex = i-dp.get(i) - 1;
+            //if prevCheckIndex is not -ve, and prev has opening and curr has closing
+            //update in curr index + 1 about new found ans 2+ dp of curr
+            if(prevCheckIndex >= 0 && A.charAt(prevCheckIndex) == '(' && A.charAt(i) == ')'){
+                int newLen = 2 + dp.get(i) + dp.get(prevCheckIndex);
+                dp.set(i+1, newLen);
+                maxLen=Math.max(maxLen, newLen);
             }
         }
-        return res;
+
+        return maxLen;
     }
 }
