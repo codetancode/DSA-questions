@@ -1,40 +1,29 @@
 public class Solution {
-    // DO NOT MODIFY THE LIST. IT IS READ ONLY
+    // DO NOT MODIFY THE ARGUMENTS WITH "final" PREFIX. IT IS READ ONLY
     public int LBSlength(final String A) {
-        //O(n, n) solution using stack
-        //idea is to store indexes of string and update max for valid string
-        if(A.length() <= 1){
-            return 0;
-        }
-        Stack<Integer> st = new Stack<>();
-        st.push(-1);
-        //pushing -1 for empty stack, or imbalanced situation(more closing bracket)
-        int ans = 0;
-        for(int i=0;i < A.length();i++){
-            char temp = A.charAt(i);
+        // O(n, n)traversing and dp array
+        // idea is to take up dp array, maintaing prev to check prev opening of same kind as that of current,
+        // and update ans in curr +1 index (so dp od size len+1)
+        int[] dp = new int[A.length()+1];
+        int maxCount = 0;
+        for(int i=1;i < A.length();i++){
+            //checking prev indexs for corresponding opening using (curr - dp of curr -1)
+            int prevCheck = i - dp[i] - 1;
 
-            // if opening push index into stack
-            if(temp == '(' || temp == '{' || temp =='['){
-                st.push(i);
-            }else{
-                //else if closing,
-                //if stack stack peek is not -1, and
-                // either of peek index is corrosponding opening for new closing char, pop opening index, get max
-                if( (st.peek() != -1) &&(
-                    (temp == '}' && A.charAt(st.peek()) == '{' ) ||
-                    (temp == ']' && A.charAt(st.peek()) == '[' ) ||
-                    (temp == ')' && A.charAt(st.peek()) == '(' )
-                    ) ){
-                    st.pop();
-                    //as found valid index sequence wrt i and peek
-                                // curr i - 1 index less than opening will give the difference(length of valid string)
-                    ans = Math.max(ans, i-st.peek());
-                }else{
-                    //if closing bracket(not matching with peek)invalid string
-                    st.push(i);
-                }
+            // if prevCheck>=0, coz refrencing in dp array
+            //if j has corresponding opening for current closing of anykind
+            if( (prevCheck >= 0) &&
+            ( ( A.charAt(prevCheck) == '('  && A.charAt(i) == ')')
+            || ( A.charAt(prevCheck) == '['  && A.charAt(i) == ']')
+            || ( A.charAt(prevCheck) == '{'  && A.charAt(i) == '}')
+             ) ){
+                //update in curr = 1 index +2 as we found atleast opening and closing of 2 len + Dp of earlier
+                //so dp of curr + 1 = dp of curr + dp of prev + 2(new found)
+                dp[i+1] = dp[i] + dp[prevCheck] + 2;
+                //update max len
+                maxCount = Math.max(maxCount, dp[i+1]);
             }
         }
-        return ans;
+        return maxCount;
     }
 }
