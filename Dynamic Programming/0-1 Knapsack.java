@@ -1,33 +1,7 @@
 public class Solution {
-    //~O(n^2, n^2), almost as recursive memoized
-    //dp using memoization
-    int knapSack(ArrayList<Integer> values, ArrayList<Integer> weights, int w, int index, ArrayList<ArrayList<Integer>> dp){
-        // as index can go to 0, so checking if this fun call is for index -1, then return 0
-        if(index == 0 || values.size() == 0){
-            return 0;
-        }
-
-        if(weights.get(index-1) <= w){
-            //when we can take that weight
-            // choosing this, weight will reduce and index also will reduce
-            if(dp.get(index).get(w) != -1){
-                return dp.get(index).get(w);
-            }
-
-            int choice1 = values.get(index-1) + knapSack(values, weights, w - weights.get(index-1), index - 1, dp);
-            // and not choosing this, weight wont reduce but index will
-            int choice2 = knapSack(values, weights, w , index - 1, dp);
-
-            dp.get(index).set( w, Math.max(choice1, choice2));
-
-            return Math.max(choice1, choice2);
-        }else{
-            //1 items is only more that the capacity so return
-            dp.get(index).set( w, knapSack(values, weights, w, index - 1, dp));
-            return dp.get(index).get(w);
-        }
-    }
-
+    //O(n^2, n^2), traversal on 2d dp array
+    //iterative approach, using 2d array
+    //dp using bottom up approach,
     public int solve(ArrayList<Integer> A, ArrayList<Integer> B, int C) {
         //as only weights and index are changeing in recursive call,
         ArrayList<ArrayList<Integer>> dp = new ArrayList<ArrayList<Integer>>();
@@ -35,10 +9,24 @@ public class Solution {
         for(int i=0;i <= A.size() ;i++){
             dp.add(new ArrayList<>(C + 1));
             for(int j=0;j <= C ;j++){
-                dp.get(i).add(-1);
+                //known as for i=0, j=0, i.e n-0 and weitht =0, no profit
+                dp.get(i).add(0);
+            }
+        }
+        //as their are 2 variables in recursive call, n and weights C, consider them as i, j respectively
+        for(int i=1;i <= A.size() ;i++){
+            for(int j=1;j <= C ;j++){
+                //if current weight is(B.get(i-1)) <= possible weight(capacity) j
+                if(B.get(i-1) <= j){
+                    //max of either non selecting(dp.get(i-1).get(j)), or selecting weight(dp.get(i-1).get(j - B.get(i-1)))
+                    dp.get(i).set(j, Math.max(dp.get(i-1).get(j), A.get(i-1) + dp.get(i-1).get(j - B.get(i-1)) ) );
+                }else{
+                    //else weight of current item is higher than the given capacity j(C), so not selecting
+                    dp.get(i).set(j, dp.get(i-1).get(j));
+                }
             }
         }
 
-        return knapSack(A, B, C, A.size(), dp);
+        return dp.get(A.size()).get(C);
     }
 }
