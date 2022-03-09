@@ -1,0 +1,42 @@
+class Solution:
+    # @param A : tuple of integers
+    # @return an integer
+    def repeatedNumber(self, A):
+        f, s, c1, c2 =-1 , -1, 0, 0
+        #first second and their counts
+        #taking 2 variables to get max counts
+        for _ in A:
+            # if else ladder to put new element in it rit posision
+            # if f or s increasing counts
+            if _ == f:
+                c1 +=1
+            elif _ == s:
+                c2 += 1
+                # else if counts are 0 assign f and s new elements
+            elif c1 == 0:
+                c1 += 1
+                f = _
+            elif c2 == 0:
+                c2 += 1
+                s = _
+            else:
+                # other wise (we have f and s and their freq) so reduce both their freqs coz of new element
+                c1-=1
+                c2-=1
+        c1=0
+        c2=0
+
+        # now actually counting f and s occurance
+        for _ in A:
+            if _ == f:
+                c1+=1
+            if _ == s:
+                c2+=1
+
+        if c1 > (len(A)/3):
+            return f
+        elif c2 > (len(A)/3):
+            return s
+        else:
+            return -1
+
